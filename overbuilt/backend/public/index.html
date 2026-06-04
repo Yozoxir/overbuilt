@@ -353,42 +353,34 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
 
 @media(max-width:900px){.social-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.today-grid,.slots-grid{grid-template-columns:1fr}.sidebar{width:52px}.sbi-lbl,.sb-logo-name,.sb-uname,.sb-section-lbl,.sb-admin-lbl,.sbi-admin .sbi-lbl{display:none}}
 
-/* DRAG & DROP DASHBOARD */
-.dash-widget{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative;transition:all .15s}
-.dash-widget.dragging{opacity:.4;transform:scale(.98)}
-.dash-widget.drag-over{border-color:rgba(139,92,246,0.5);background:rgba(139,92,246,0.05)}
-.widget-drag-handle{position:absolute;top:10px;right:10px;cursor:grab;color:var(--text3);opacity:0;transition:opacity .15s;display:flex;gap:2px;flex-direction:column}
-.widget-drag-handle span{width:14px;height:1.5px;background:currentColor;border-radius:1px;display:block}
-.dash-widget:hover .widget-drag-handle{opacity:1}
-.widget-drag-handle:active{cursor:grabbing}
-.widget-toggle{position:absolute;top:10px;right:30px;cursor:pointer;color:var(--text3);opacity:0;transition:opacity .15s;font-size:.75rem;background:none;border:none;font-family:var(--font)}
-.dash-widget:hover .widget-toggle{opacity:1}
-.dash-widget.hidden-widget .widget-body{display:none}
-.dash-widget.hidden-widget{opacity:.5;border-style:dashed}
-.widget-hidden-label{text-align:center;padding:.5rem;font-size:.7rem;color:var(--text3);font-style:italic}
-.drag-grid{display:flex;flex-direction:column;gap:10px}
-.drag-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-/* ACCOUNT */
-.account-section{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px}
-.account-section-title{font-size:.72rem;font-weight:700;color:var(--accent-light);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.account-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.account-field{display:flex;flex-direction:column;gap:.3rem}
-.account-field label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-weight:600}
-.account-field input,.account-field textarea,.account-field select{background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;font-family:var(--font);font-size:.84rem;outline:none;border-radius:9px;transition:border-color .15s;width:100%}
-.account-field input:focus,.account-field textarea:focus{border-color:rgba(139,92,246,0.4)}
-.account-field input::placeholder{color:var(--text3)}
-.account-field textarea{min-height:80px;resize:vertical;line-height:1.5}
-.account-field.full{grid-column:1/-1}
-
-/* IMAGE UPLOAD */
-.img-upload-zone{border:2px dashed rgba(139,92,246,0.25);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .15s;position:relative}
-.img-upload-zone:hover{border-color:rgba(139,92,246,0.5);background:rgba(139,92,246,0.04)}
-.img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.img-upload-zone .upload-icon{font-size:1.5rem;margin-bottom:.4rem}
-.img-upload-zone .upload-text{font-size:.78rem;color:var(--text3)}
-.img-upload-zone .upload-hint{font-size:.65rem;color:var(--text3);margin-top:.2rem;opacity:.6}
-.img-preview{width:100%;max-height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:none;margin-top:.5rem}
+.dash-widget{position:relative;transition:all .2s}
+.dash-widget.dragging{opacity:.4;transform:scale(.98);pointer-events:none}
+.dash-widget.drag-over{outline:2px dashed rgba(139,92,246,0.5)}
+.widget-handle{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:2px;cursor:grab;opacity:0;transition:opacity .15s;z-index:5;padding:4px}
+.widget-handle span{width:12px;height:1.5px;background:var(--text3);display:block;border-radius:1px}
+.dash-widget:hover .widget-handle{opacity:1}
+.widget-eye{position:absolute;top:8px;right:32px;cursor:pointer;opacity:0;transition:opacity .15s;background:none;border:none;color:var(--text3);font-size:.75rem;z-index:5;padding:4px}
+.dash-widget:hover .widget-eye{opacity:1}
+.widget-hidden .widget-body{display:none}
+.widget-hidden{opacity:.4;border-style:dashed}
+.widget-hidden-msg{text-align:center;padding:.5rem;font-size:.7rem;color:var(--text3);font-style:italic}
+.drag-container{display:flex;flex-direction:column;gap:10px}
+.account-wrap{display:flex;flex-direction:column;gap:10px}
+.acc-section{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:16px}
+.acc-section-title{font-size:.68rem;font-weight:700;color:var(--accent-light);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.acc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.acc-field{display:flex;flex-direction:column;gap:.25rem}
+.acc-field.full{grid-column:1/-1}
+.acc-field label{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-weight:600}
+.acc-field input,.acc-field textarea,.acc-field select{background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);padding:.62rem .85rem;font-family:var(--font);font-size:.84rem;outline:none;border-radius:9px;transition:border-color .15s;width:100%}
+.acc-field input:focus,.acc-field textarea:focus{border-color:rgba(139,92,246,0.4)}
+.acc-field input::placeholder,.acc-field textarea::placeholder{color:var(--text3)}
+.acc-field textarea{min-height:75px;resize:vertical;line-height:1.5}
+.img-upload{border:2px dashed rgba(139,92,246,0.2);border-radius:9px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.img-upload:hover{border-color:rgba(139,92,246,0.45);background:rgba(139,92,246,0.04)}
+.img-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-preview{width:100%;max-height:90px;object-fit:cover;border-radius:6px;margin-bottom:5px;display:none}
+.img-upload-text{font-size:.72rem;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -684,6 +676,226 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
 var API='',me=null,formations=[],slotsData=[],currentChapterId=null,currentChapterDone=false,noteTargetId=null,msgTargetId=null,obAnswers={},adminData=[];
 var VIEWS={Dashboard:{title:'DASHBOARD',sub:''},Compte:{title:'MON COMPTE',sub:'Modifier tes informations'},Daily:{title:"AUJOURD'HUI",sub:''},Calls:{title:'CALLS',sub:'Réserver un 1:1'},Formation:{title:'FORMATION',sub:''},Admin:{title:'MEMBRES',sub:''},AdminCalls:{title:'AGENDA',sub:'Gérer les créneaux'},AdminContent:{title:'CONTENU',sub:'Théorie + action du jour'},TimeBlocks:{title:'TIME BLOCKS',sub:'Bilans 30 min'},Onboardings:{title:'ONBOARDINGS',sub:''}};
 
+
+// ── DASHBOARD DRAG & DROP ─────────────────────────────────
+var DEFAULT_WIDGETS = [
+  {id:'stats',label:'Statistiques',visible:true,order:0},
+  {id:'social',label:'Reseaux sociaux',visible:true,order:1},
+  {id:'daily_snap',label:'Contenu du jour',visible:true,order:2},
+  {id:'add_account',label:'Ajouter un compte',visible:true,order:3},
+];
+var dashWidgets = null;
+
+async function loadDashLayout() {
+  try {
+    var r = await fetch(API+'/layout',{credentials:'include'});
+    if (!r.ok) return;
+    var d = await r.json();
+    if (d.layout && d.layout.length) dashWidgets = d.layout;
+    else dashWidgets = DEFAULT_WIDGETS.map(function(w){return Object.assign({},w);});
+  } catch(e) {
+    dashWidgets = DEFAULT_WIDGETS.map(function(w){return Object.assign({},w);});
+  }
+}
+
+async function saveDashLayout() {
+  if (!dashWidgets) return;
+  await fetch(API+'/layout',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({layout:dashWidgets})});
+}
+
+function toggleWidget(id) {
+  var w = dashWidgets.find(function(x){return x.id===id;});
+  if (w) { w.visible = !w.visible; saveDashLayout(); renderDashboard(); }
+}
+
+function initDrag() {
+  var grid = document.getElementById('dragGrid');
+  if (!grid) return;
+  var src = null;
+  Array.from(grid.children).forEach(function(card) {
+    card.addEventListener('dragstart', function(e) { src=card; card.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    card.addEventListener('dragend', function() {
+      card.classList.remove('dragging');
+      Array.from(grid.children).forEach(function(c,i){ c.classList.remove('drag-over'); var w=dashWidgets.find(function(x){return x.id===c.dataset.wid;}); if(w)w.order=i; });
+      saveDashLayout();
+    });
+    card.addEventListener('dragover', function(e){ e.preventDefault(); if(card!==src)card.classList.add('drag-over'); });
+    card.addEventListener('dragleave', function(){ card.classList.remove('drag-over'); });
+    card.addEventListener('drop', function(e){ e.preventDefault(); if(src&&src!==card){ var p=card.parentNode,cs=Array.from(p.children),si=cs.indexOf(src),ti=cs.indexOf(card); if(si<ti)p.insertBefore(src,card.nextSibling); else p.insertBefore(src,card); } card.classList.remove('drag-over'); });
+  });
+}
+
+function renderDashboard() {
+  if (!dashWidgets) { dashWidgets = DEFAULT_WIDGETS.map(function(w){return Object.assign({},w);}); }
+  var sorted = dashWidgets.slice().sort(function(a,b){return a.order-b.order;});
+  var accs = me.social_accounts || [];
+  var el = document.getElementById('viewDashboard');
+  var html = '<div class="drag-container" id="dragGrid">';
+
+  sorted.forEach(function(w) {
+    var hidden = !w.visible;
+    html += '<div class="dash-widget'+(hidden?' widget-hidden':'')+'" data-wid="'+w.id+'" draggable="true">';
+    html += '<button class="widget-eye" onclick="toggleWidget(\''+w.id+'\')">'+( hidden?'&#128065;':'&#128065;')+'</button>';
+    html += '<div class="widget-handle" title="Déplacer"><span></span><span></span><span></span></div>';
+    html += '<div class="widget-body">';
+
+    if (w.id === 'stats') {
+      var tf=accs.reduce(function(s,a){return s+(a.latest?a.latest.followers:0);},0);
+      var tl=accs.reduce(function(s,a){return s+(a.latest?a.latest.likes:0);},0);
+      var ea=accs.filter(function(a){return a.latest&&a.latest.engagement_rate>0;});
+      var avg=ea.length>0?(ea.reduce(function(s,a){return s+a.latest.engagement_rate;},0)/ea.length).toFixed(1):'0';
+      html += '<div class="stats-grid">';
+      html += '<div class="stat em"><div class="stat-arrow">&#8599;</div><div class="stat-val v">'+fmtN(tf)+'</div><div class="stat-lbl">Total abonnés</div></div>';
+      html += '<div class="stat"><div class="stat-val">'+accs.length+'</div><div class="stat-lbl">Comptes suivis</div></div>';
+      html += '<div class="stat"><div class="stat-val">'+fmtN(tl)+'</div><div class="stat-lbl">Total likes</div></div>';
+      html += '<div class="stat em"><div class="stat-val v">'+avg+'%</div><div class="stat-lbl">Engagement</div></div>';
+      html += '</div>';
+
+    } else if (w.id === 'social') {
+      if (!accs.length) { html += '<div class="empty-state">Ajoute tes comptes ci-dessous.</div>'; }
+      else {
+        html += '<div class="social-grid">';
+        accs.forEach(function(acc){
+          var l=acc.latest,h=acc.history||[];
+          var platClass='sc-'+acc.platform;
+          var iconHtml=acc.platform==='tiktok'?'<svg viewBox="0 0 24 24" fill="none"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1-.07z" fill="#f5f0e4"/></svg>':acc.platform==='instagram'?'<svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="#f5f0e4" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="#f5f0e4" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.1" fill="#f5f0e4"/></svg>':'<svg viewBox="0 0 24 24" fill="none"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.96-1.96A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z" fill="#ff0000"/><polygon points="9.75 15.02 15.5 12 9.75 8.98" fill="white"/></svg>';
+          var trend=h.length>1?h[0].followers-h[h.length-1].followers:0;
+          var trendHtml=trend>=0?'<div class="chip chip-up">&#9650; +'+fmtN(trend)+'</div>':'<div class="chip chip-dn">&#9660; '+fmtN(Math.abs(trend))+'</div>';
+          var isYt=acc.platform==='youtube';
+          var barBase=isYt?'rgba(255,0,0,':'rgba(139,92,246,';
+          html+='<div class="sc '+platClass+'">';
+          html+='<div class="sc-head"><div class="plat-icon pi-'+acc.platform+'">'+iconHtml+'</div><div><div class="plat-name">'+acc.platform.toUpperCase()+'</div><div class="plat-handle">'+acc.handle+'</div></div>'+trendHtml+'</div>';
+          html+='<div class="mets-grid"><div class="met"><div class="met-val '+(isYt?'r':'')+'">'+fmtN(l?l.followers:0)+'</div><div class="met-lbl">Abonnés</div></div><div class="met"><div class="met-val">'+fmtN(l?l.likes:0)+'</div><div class="met-lbl">Likes</div></div><div class="met"><div class="met-val">'+fmtN(l?l.views:0)+'</div><div class="met-lbl">Vues</div></div><div class="met"><div class="met-val v">'+(l&&l.engagement_rate>0?l.engagement_rate+'%':'—')+'</div><div class="met-lbl">Engag.</div></div></div>';
+          if(h.length>1){var maxF=Math.max.apply(null,h.map(function(x){return x.followers;}))||1,minF=Math.min.apply(null,h.map(function(x){return x.followers;}));html+='<div class="chart-lbl">Evolution 7j</div><div class="chart-wrap">';h.slice().reverse().forEach(function(x,i){var range=maxF-minF||1,pct=Math.max(8,Math.round(((x.followers-minF)/range)*100)),alpha=0.12+(i/h.length)*0.88;html+='<div class="cbar" style="height:'+pct+'%;background:'+barBase+alpha+')"></div>';});html+='</div>';}
+          html+='<div class="sc-footer"><button class="btn-ghost btn-sm" data-acc-id="'+acc.id+'" onclick="refreshAccBtn(this)">&#8635; Refresh</button><button class="btn-ghost btn-sm" style="color:rgba(255,100,100,.45)" data-acc-id="'+acc.id+'" onclick="deleteAccBtn(this)">Supprimer</button></div></div>';
+        });
+        html += '</div>';
+      }
+
+    } else if (w.id === 'daily_snap') {
+      html += '<div id="dashDailySnap"><div class="empty-state" style="padding:1rem">Chargement...</div></div>';
+      setTimeout(loadDailySnap, 100);
+
+    } else if (w.id === 'add_account') {
+      html += '<div style="font-size:.72rem;font-weight:600;color:var(--text2);margin-bottom:10px">Ajouter un compte social</div>';
+      html += '<div class="add-row"><select class="add-select" id="addPlatform"><option value="tiktok">TikTok</option><option value="instagram">Instagram</option><option value="youtube">YouTube</option></select><input class="add-input" id="addHandle" type="text" placeholder="@username" onkeydown="if(event.key===\'Enter\')addAccount()"/><button class="btn-primary" onclick="addAccount()">+ Ajouter</button></div>';
+    }
+
+    if (hidden) html += '<div class="widget-hidden-msg">Masqué — clique sur &#128065; pour afficher</div>';
+    html += '</div></div>';
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
+  setTimeout(initDrag, 50);
+}
+
+async function loadDailySnap() {
+  try {
+    var r = await fetch(API+'/daily',{credentials:'include'});
+    if (!r.ok) return;
+    var d = await r.json();
+    var el = document.getElementById('dashDailySnap');
+    if (!el) return;
+    if (!d.content) { el.innerHTML = '<div class="empty-state" style="padding:1rem">Pas de contenu aujourd\'hui.</div>'; return; }
+    el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="tday-card theory" style="padding:12px"><span class="tday-tag tag-theory">Theorie</span><div class="tday-title" style="font-size:.85rem">'+d.content.theory_title+'</div></div><div class="tday-card action" style="padding:12px"><span class="tday-tag tag-action">Action</span><div class="tday-title" style="font-size:.85rem">'+d.content.action_title+'</div></div></div>';
+  } catch(e) {}
+}
+
+// ── COMPTE ────────────────────────────────────────────────
+var accountData = null;
+
+async function loadAccount() {
+  try {
+    var r = await fetch(API+'/account',{credentials:'include'});
+    if (!r.ok) return;
+    accountData = await r.json();
+    if (document.getElementById('viewCompte').classList.contains('active')) renderAccount();
+  } catch(e) {}
+}
+
+function renderAccount() {
+  var el = document.getElementById('viewCompte');
+  if (!accountData) { el.innerHTML = '<div class="empty-state">Aucune donnée de compte.</div>'; return; }
+  var d = accountData;
+
+  function selHtml(id, opts, val) {
+    var h = '<select class="acc-field" id="'+id+'" style="background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);padding:.62rem .85rem;font-family:var(--font);font-size:.84rem;outline:none;border-radius:9px;width:100%">';
+    opts.forEach(function(o){ h += '<option value="'+o.v+'"'+(val===o.v?' selected':'')+'>'+o.l+'</option>'; });
+    return h + '</select>';
+  }
+
+  var obOpts = {
+    objectif: [{v:'revenu_principal',l:'Revenu principal'},{v:'complement',l:'Complement'},{v:'marque',l:'Marque perso'},{v:'business',l:'Business en ligne'}],
+    experience: [{v:'debutant',l:'Debutant'},{v:'intermediaire',l:'Intermediaire'},{v:'avance',l:'Avance'}],
+    disponibilite: [{v:'3h+',l:'3h+'},{v:'1-3h',l:'1-3h'},{v:'moins_1h',l:'Moins de 1h'}],
+  };
+
+  var html = '<div class="account-wrap">';
+
+  html += '<div class="acc-section"><div class="acc-section-title">Identite</div><div class="acc-grid">';
+  html += '<div class="acc-field"><label>Prenom</label><input type="text" id="acc_prenom" value="'+(d.prenom||'')+'"/></div>';
+  html += '<div class="acc-field"><label>Nom</label><input type="text" id="acc_nom" value="'+(d.nom||'')+'"/></div>';
+  html += '<div class="acc-field"><label>Email</label><input type="email" id="acc_email" value="'+(d.email||'')+'"/></div>';
+  html += '<div class="acc-field"><label>Telephone</label><input type="tel" id="acc_phone" value="'+(d.phone||'')+'"/></div>';
+  html += '</div></div>';
+
+  html += '<div class="acc-section"><div class="acc-section-title">Profil coaching</div><div class="acc-grid">';
+  html += '<div class="acc-field"><label>Objectif</label>'+selHtml('acc_objectif',obOpts.objectif,d.objectif)+'</div>';
+  html += '<div class="acc-field"><label>Niveau</label>'+selHtml('acc_experience',obOpts.experience,d.experience)+'</div>';
+  html += '<div class="acc-field"><label>Dispo / jour</label>'+selHtml('acc_disponibilite',obOpts.disponibilite,d.disponibilite)+'</div>';
+  html += '<div class="acc-field"><label>Niche</label><input type="text" id="acc_niche" value="'+(d.niche||'')+'" placeholder="ex: finance, lifestyle..."/></div>';
+  html += '<div class="acc-field full"><label>Motivation</label><textarea id="acc_motivation">'+(d.motivation||'')+'</textarea></div>';
+  html += '</div></div>';
+
+  html += '<div class="acc-section"><div class="acc-section-title">Reseaux sociaux</div><div class="acc-grid">';
+  html += '<div class="acc-field"><label>TikTok @</label><input type="text" id="acc_tiktok_handle" value="'+(d.tiktok_handle||'')+'" placeholder="@username"/></div>';
+  html += '<div class="acc-field"><label>Instagram @</label><input type="text" id="acc_instagram_handle" value="'+(d.instagram_handle||'')+'" placeholder="@username"/></div>';
+  html += '<div class="acc-field full"><label>YouTube @</label><input type="text" id="acc_youtube_handle" value="'+(d.youtube_handle||'')+'" placeholder="@chaine"/></div>';
+  html += '</div></div>';
+
+  html += '<button class="btn-primary" style="width:100%;padding:.8rem" onclick="saveAccount()">Sauvegarder</button>';
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+async function saveAccount() {
+  var fields = ['prenom','nom','email','phone','objectif','experience','disponibilite','niche','motivation','tiktok_handle','instagram_handle','youtube_handle'];
+  var payload = {};
+  fields.forEach(function(f){ var el=document.getElementById('acc_'+f); if(el) payload[f]=el.value.trim(); });
+  var r = await fetch(API+'/account',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  var d = await r.json();
+  if (d.ok) showToast('Compte mis a jour ✓','success');
+  else showToast(d.error||'Erreur','error');
+}
+
+// ── IMAGE UPLOAD MODULES ──────────────────────────────────
+function modImageHtml(modId, hasImg) {
+  var previewSrc = hasImg ? '/api/module-image/'+modId+'?t='+Date.now() : '';
+  var h = '<div class="img-upload" id="imgZone_'+modId+'" onclick="document.getElementById(\'imgFile_'+modId+'\').click()">';
+  h += '<input type="file" id="imgFile_'+modId+'" accept="image/*" style="display:none" onchange="uploadModImg('+modId+',this)" onclick="event.stopPropagation()"/>';
+  if (previewSrc) h += '<img id="imgPrev_'+modId+'" src="'+previewSrc+'" class="img-upload-preview" style="display:block"/>';
+  else h += '<img id="imgPrev_'+modId+'" class="img-upload-preview"/>';
+  h += '<div class="img-upload-text">'+( hasImg ? 'Changer image' : '&#128247; Uploader une image')+'</div>';
+  h += '</div>';
+  return h;
+}
+
+async function uploadModImg(modId, input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var prev = document.getElementById('imgPrev_'+modId);
+  if (prev) { prev.src = URL.createObjectURL(file); prev.style.display = 'block'; }
+  var fd = new FormData();
+  fd.append('image', file);
+  try {
+    var r = await fetch(API+'/admin/formations/modules/'+modId+'/image',{method:'POST',credentials:'include',body:fd});
+    var d = await r.json();
+    if (d.ok) showToast('Image uploadee ✓','success');
+    else showToast(d.error||'Erreur','error');
+  } catch(e) { showToast('Erreur upload','error'); }
+}
+
 async function init(){
   var p=new URLSearchParams(window.location.search);
   if(p.get('logged')||p.get('error'))history.replaceState({},'','/');
@@ -706,8 +918,7 @@ function showApp(){
     loadAdmin();loadAdminCalls();loadAdminContent();loadOnboardings();loadTimeBlocks();
     setInterval(loadAdmin,60000);setInterval(loadTimeBlocks,30000);
   }
-  loadLayout().then(function(){ renderDashboard(); });
-  loadFormations();loadDaily();loadSlots();loadMyCalls();loadAccount();
+  renderDashboard();loadFormations();loadDaily();loadSlots();loadMyCalls();
 }
 
 function navTo(name,el){
@@ -716,7 +927,6 @@ function navTo(name,el){
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
   var view=document.getElementById('view'+name);
   if(view)view.classList.add('active');
-  if(name==='Compte')loadAccount();
   var meta=VIEWS[name]||{title:name,sub:''};
   document.getElementById('mhTitle').textContent=meta.title;
   document.getElementById('mhSub').textContent=meta.sub||(function(){var ob=me&&me.onboarding;var today=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});return(ob?'Bonjour '+ob.prenom+' — ':'')+today.charAt(0).toUpperCase()+today.slice(1);})();
@@ -755,8 +965,7 @@ async function submitOnboarding(){
 
 // ── DASHBOARD ──────────────────────────────────────────────
 function fmtN(n){if(!n)return '0';n=parseInt(n);if(n>=1000000)return (n/1000000).toFixed(1).replace('.0','')+'M';if(n>=1000)return (n/1000).toFixed(1).replace('.0','')+'k';return n.toString();}
-function renderDashboard(){ renderDashboardLayout(); }
-function renderDashboardOLD(){
+function renderDashboard(){
   var el=document.getElementById('viewDashboard'),accs=me.social_accounts||[];
   if(!accs.length){el.innerHTML='<div class="empty-state">Aucun compte social — ajoute-les ci-dessous pour suivre ta progression.</div>'+buildAddAccountForm();return;}
   var tf=accs.reduce(function(s,a){return s+(a.latest?a.latest.followers:0);},0);
@@ -931,8 +1140,7 @@ function renderFormations(){
     var pc=mod.progress_pct,pcc=pc===100?'var(--accent-light)':pc>0?'#fbbf24':'var(--text3)';
     var tm=mod.chapters.reduce(function(s,c){return s+(c.duration_minutes||0);},0);
     html+='<div class="mod-card"><div class="mod-head">';
-    var imgUrl=mod.cover_url||'/api/module-image/'+mod.id;
-    if(me&&me.is_admin){html+=buildModuleImageUpload(mod.id,mod.cover_url);} else if(mod.cover_url)html+='<img src="'+mod.cover_url+'" class="mod-cover" onerror="this.style.display=\'none\'"/>';
+    if(mod.cover_url)html+='<img src="'+mod.cover_url+'" class="mod-cover" onerror="this.style.display=\'none\'"/>';
     html+='<div style="flex:1"><div class="mod-title">'+mod.title+'</div>'+(mod.description?'<div class="mod-meta">'+mod.description+'</div>':'')+'<div class="mod-meta">'+mod.total_chapters+' chapitre'+(mod.total_chapters>1?'s':'')+(tm>0?' · '+durStr(tm):'')+'</div></div>';
     html+='<div style="text-align:right;flex-shrink:0"><div class="mod-pct" style="color:'+pcc+'">'+pc+'%</div><div class="mod-pct-lbl">'+mod.completed_chapters+'/'+mod.total_chapters+'</div><div class="mod-prog-track"><div class="mod-prog-fill" style="width:'+pc+'%;background:'+pcc+'"></div></div></div>';
     if(me&&me.is_admin){html+='<div style="display:flex;gap:4px;flex-shrink:0"><button class="act-btn" data-mod-id="'+mod.id+'" data-mod-title="'+mod.title.replace(/"/g,'&quot;')+'" data-mod-desc="'+(mod.description||'').replace(/"/g,'&quot;')+'" data-mod-cover="'+(mod.cover_url||'')+'" onclick="editModBtn(this)">&#9999;</button><button class="act-btn" data-mod-id="'+mod.id+'" onclick="addChBtn(this)">+Ch</button><button class="act-btn danger" data-mod-id="'+mod.id+'" onclick="delModBtn(this)">&#128465;</button></div>';}

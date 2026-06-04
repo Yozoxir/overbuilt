@@ -147,17 +147,14 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS module_images (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    module_id INTEGER NOT NULL,
-    filename TEXT NOT NULL,
+    module_id INTEGER NOT NULL UNIQUE,
     data BLOB NOT NULL,
-    mime_type TEXT DEFAULT 'image/jpeg',
-    created_at INTEGER DEFAULT (unixepoch())
+    mime_type TEXT DEFAULT 'image/jpeg'
   );
 
   CREATE TABLE IF NOT EXISTS dashboard_layout (
     user_id TEXT PRIMARY KEY,
-    layout TEXT NOT NULL DEFAULT '[]',
-    updated_at INTEGER DEFAULT (unixepoch())
+    layout TEXT NOT NULL DEFAULT '[]'
   );
 
   CREATE TABLE IF NOT EXISTS admin_settings (
