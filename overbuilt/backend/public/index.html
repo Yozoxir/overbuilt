@@ -514,6 +514,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
         <div class="sbi-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
         <span class="sbi-lbl">Calls</span>
       </div>
+      <div class="sbi" data-view="Stats" onclick="navTo('Stats',this)">
+        <div class="sbi-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <span class="sbi-lbl">Mes stats</span>
+      </div>
+      <div class="sbi" data-view="Miro" onclick="navTo('Miro',this)">
+        <div class="sbi-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg></div>
+        <span class="sbi-lbl">Miro</span>
+      </div>
       <div class="sbi" data-view="Compte" onclick="navTo('Compte',this)">
         <div class="sbi-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
         <span class="sbi-lbl">Mon compte</span>
@@ -541,11 +549,22 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
         <div class="sbi-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
         <span class="sbi-lbl">Time Blocks</span>
       </div>
+      <div class="sbi-admin" onclick="navTo('Miro',document.querySelector('[data-view=Miro]'))">
+        <div class="sbi-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg></div>
+        <span class="sbi-lbl">Miro</span>
+      </div>
+      <div class="sbi-admin" onclick="navTo('Settings',document.querySelector('[data-view=Settings]'))">
+        <div class="sbi-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <span class="sbi-lbl">Parametres</span>
+      </div>
       <div class="sbi-admin" onclick="navTo('Onboardings',document.querySelector('[data-view=Onboardings]'))">
         <div class="sbi-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
         <span class="sbi-lbl">Onboardings</span>
       </div>
       <!-- Hidden nav targets for admin -->
+      <span data-view="Miro" style="display:none"></span>
+      <span data-view="Settings" style="display:none"></span>
+      <span data-view="Stats" style="display:none"></span>
       <span data-view="Admin" style="display:none"></span>
       <span data-view="AdminCalls" style="display:none"></span>
       <span data-view="AdminContent" style="display:none"></span>
@@ -578,6 +597,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
       <div class="view" id="viewDaily"></div>
       <!-- CALLS -->
       <div class="view" id="viewCalls"></div>
+      <!-- MIRO -->
+      <div class="view" id="viewMiro"></div>
+      <!-- SETTINGS -->
+      <div class="view" id="viewSettings"></div>
+      <!-- STATS MANUELLES -->
+      <div class="view" id="viewStats"></div>
       <!-- COMPTE -->
       <div class="view" id="viewCompte"></div>
       <!-- FORMATION -->
@@ -674,7 +699,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
 
 <script>
 var API='',me=null,formations=[],slotsData=[],currentChapterId=null,currentChapterDone=false,noteTargetId=null,msgTargetId=null,obAnswers={},adminData=[];
-var VIEWS={Dashboard:{title:'DASHBOARD',sub:''},Compte:{title:'MON COMPTE',sub:'Modifier tes informations'},Daily:{title:"AUJOURD'HUI",sub:''},Calls:{title:'CALLS',sub:'Réserver un 1:1'},Formation:{title:'FORMATION',sub:''},Admin:{title:'MEMBRES',sub:''},AdminCalls:{title:'AGENDA',sub:'Gérer les créneaux'},AdminContent:{title:'CONTENU',sub:'Théorie + action du jour'},TimeBlocks:{title:'TIME BLOCKS',sub:'Bilans 30 min'},Onboardings:{title:'ONBOARDINGS',sub:''}};
+var VIEWS={Dashboard:{title:'DASHBOARD',sub:''},Miro:{title:'TABLEAU MIRO',sub:''},Settings:{title:'PARAMETRES',sub:'Configuration de la plateforme'},Stats:{title:'MES STATS',sub:'Saisir tes statistiques'},Compte:{title:'MON COMPTE',sub:'Modifier tes informations'},Daily:{title:"AUJOURD'HUI",sub:''},Calls:{title:'CALLS',sub:'Réserver un 1:1'},Formation:{title:'FORMATION',sub:''},Admin:{title:'MEMBRES',sub:''},AdminCalls:{title:'AGENDA',sub:'Gérer les créneaux'},AdminContent:{title:'CONTENU',sub:'Théorie + action du jour'},TimeBlocks:{title:'TIME BLOCKS',sub:'Bilans 30 min'},Onboardings:{title:'ONBOARDINGS',sub:''}};
 
 
 // ── DASHBOARD DRAG & DROP ─────────────────────────────────
@@ -894,6 +919,225 @@ async function uploadModImg(modId, input) {
     if (d.ok) showToast('Image uploadee ✓','success');
     else showToast(d.error||'Erreur','error');
   } catch(e) { showToast('Erreur upload','error'); }
+}
+
+
+// ── SETTINGS ──────────────────────────────────────────────
+var appSettings = {};
+
+async function loadSettings() {
+  try {
+    var r = await fetch(API+'/settings/public',{credentials:'include'});
+    if (r.ok) appSettings = await r.json();
+  } catch(e) {}
+}
+
+async function loadAdminSettings() {
+  try {
+    var r = await fetch(API+'/admin/settings',{credentials:'include'});
+    if (!r.ok) return;
+    var d = await r.json();
+    renderSettings(d);
+  } catch(e) {}
+}
+
+function renderSettings(s) {
+  var el = document.getElementById('viewSettings');
+  var days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  var html = '';
+
+  // General settings
+  html += '<div class="acc-section"><div class="acc-section-title">Plateforme</div><div class="acc-grid">';
+  html += '<div class="acc-field full"><label>Nom de la plateforme</label><input type="text" id="s_platform_name" value="'+(s.platform_name||'OVERBUILT')+'"/></div>';
+  html += '<div class="acc-field full"><label>Message de bienvenue</label><input type="text" id="s_welcome_message" value="'+(s.welcome_message||'')+'"/></div>';
+  html += '<div class="acc-field full"><label>URL Miro (lien invitation)</label><input type="text" id="s_miro_url" value="'+(s.miro_url||'')+'" placeholder="https://miro.com/..."/></div>';
+  html += '</div></div>';
+
+  // Call settings
+  html += '<div class="acc-section"><div class="acc-section-title">Calls — Disponibilites par defaut</div>';
+  html += '<button class="btn-primary btn-sm" style="margin-bottom:12px" onclick="generateSlots()">Generer les creneaux des 7 prochains jours</button>';
+  html += '<div id="callSettingsList"></div>';
+  html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><div style="font-size:.72rem;font-weight:600;color:var(--text2);margin-bottom:8px">Ajouter une plage horaire</div>';
+  html += '<div class="acc-grid">';
+  html += '<div class="acc-field"><label>Jour</label><select id="cs_day" style="background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);padding:.62rem .85rem;font-family:var(--font);font-size:.84rem;outline:none;border-radius:9px;width:100%">';
+  days.forEach(function(d,i){ html += '<option value="'+i+'">'+d+'</option>'; });
+  html += '</select></div>';
+  html += '<div class="acc-field"><label>Debut</label><input type="time" id="cs_start" value="09:00"/></div>';
+  html += '<div class="acc-field"><label>Fin</label><input type="time" id="cs_end" value="18:00"/></div>';
+  html += '<div class="acc-field"><label>Duree (min)</label><select id="cs_dur" style="background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);padding:.62rem .85rem;font-family:var(--font);font-size:.84rem;outline:none;border-radius:9px;width:100%"><option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></div>';
+  html += '</div><button class="btn-primary btn-sm" style="margin-top:8px" onclick="addCallSetting()">Ajouter</button>';
+  html += '</div></div>';
+
+  // Toggles
+  html += '<div class="acc-section"><div class="acc-section-title">Fonctionnalites</div><div style="display:flex;flex-direction:column;gap:8px">';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:.84rem;color:var(--text2)">Calls activés</span><label style="position:relative;width:38px;height:20px;cursor:pointer"><input type="checkbox" id="s_calls_enabled" '+(s.calls_enabled!=='0'?'checked':'')+' style="opacity:0;width:0;height:0;position:absolute"/><span style="position:absolute;inset:0;background:'+(s.calls_enabled!=='0'?'var(--accent)':'var(--border)')+';border-radius:20px;transition:background .2s"></span><span style="position:absolute;top:2px;left:'+(s.calls_enabled!=='0'?'20':'2')+'px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s"></span></label></div>';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:.84rem;color:var(--text2)">Rappels quotidiens (bot Discord)</span><label style="position:relative;width:38px;height:20px;cursor:pointer"><input type="checkbox" id="s_daily_reminder_enabled" '+(s.daily_reminder_enabled!=='0'?'checked':'')+' style="opacity:0;width:0;height:0;position:absolute"/><span style="position:absolute;inset:0;background:'+(s.daily_reminder_enabled!=='0'?'var(--accent)':'var(--border)')+';border-radius:20px;transition:background .2s"></span><span style="position:absolute;top:2px;left:'+(s.daily_reminder_enabled!=='0'?'20':'2')+'px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s"></span></label></div>';
+  html += '</div></div>';
+
+  html += '<button class="btn-primary" style="width:100%;padding:.8rem;margin-top:8px" onclick="saveSettings()">Sauvegarder</button>';
+  el.innerHTML = html;
+  loadCallSettings();
+}
+
+async function saveSettings() {
+  var payload = {
+    platform_name: document.getElementById('s_platform_name').value.trim(),
+    welcome_message: document.getElementById('s_welcome_message').value.trim(),
+    miro_url: document.getElementById('s_miro_url').value.trim(),
+    calls_enabled: document.getElementById('s_calls_enabled').checked ? '1' : '0',
+    daily_reminder_enabled: document.getElementById('s_daily_reminder_enabled').checked ? '1' : '0',
+  };
+  var r = await fetch(API+'/admin/settings',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  var d = await r.json();
+  if (d.ok) {
+    showToast('Parametres sauvegardes ✓','success');
+    loadSettings();
+  } else showToast(d.error||'Erreur','error');
+}
+
+async function loadCallSettings() {
+  try {
+    var r = await fetch(API+'/admin/call-settings',{credentials:'include'});
+    if (!r.ok) return;
+    var list = await r.json();
+    var el = document.getElementById('callSettingsList');
+    if (!el) return;
+    var days = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+    var html = '';
+    list.forEach(function(s) {
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:.5rem .8rem;background:rgba(0,0,0,0.15);border:1px solid var(--border2);border-radius:8px;margin-bottom:5px">';
+      html += '<span style="font-size:.72rem;font-weight:700;color:var(--accent-light);min-width:30px">'+days[s.day_of_week]+'</span>';
+      html += '<span style="font-size:.78rem;color:var(--text2)">'+s.start_time+' - '+s.end_time+'</span>';
+      html += '<span style="font-size:.7rem;color:var(--text3)">'+s.slot_duration+' min</span>';
+      html += '<div style="margin-left:auto;width:32px;height:16px;border-radius:16px;background:'+(s.active?'var(--accent)':'var(--border)')+';cursor:pointer;position:relative" data-cs-id="'+s.id+'" data-cs-active="'+s.active+'" onclick="toggleCallSetting(this)"><div style="position:absolute;top:2px;left:'+(s.active?'18':'2')+'px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s"></div></div>';
+      html += '</div>';
+    });
+    if (!list.length) html = '<div class="empty-state">Aucune plage horaire configuree.</div>';
+    el.innerHTML = html;
+  } catch(e) {}
+}
+
+async function addCallSetting() {
+  var day = document.getElementById('cs_day').value;
+  var start = document.getElementById('cs_start').value;
+  var end = document.getElementById('cs_end').value;
+  var dur = document.getElementById('cs_dur').value;
+  var r = await fetch(API+'/admin/call-settings',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({day_of_week:parseInt(day),start_time:start,end_time:end,slot_duration:parseInt(dur)})});
+  var d = await r.json();
+  if (d.ok) { showToast('Plage ajoutee ✓','success'); loadCallSettings(); }
+  else showToast(d.error||'Erreur','error');
+}
+
+async function toggleCallSetting(el) {
+  var id = el.dataset.csId;
+  var active = el.dataset.csActive === '1' ? 0 : 1;
+  await fetch(API+'/admin/call-settings/'+id,{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({active:active})});
+  loadCallSettings();
+}
+
+async function generateSlots() {
+  var r = await fetch(API+'/admin/slots/generate',{method:'POST',credentials:'include'});
+  var d = await r.json();
+  if (d.ok) showToast(d.generated+' creneaux generes ✓','success');
+  else showToast(d.error||'Erreur','error');
+}
+
+// ── MIRO ──────────────────────────────────────────────────
+function renderMiro() {
+  var el = document.getElementById('viewMiro');
+  var url = appSettings.miro_url || '';
+  if (!url) {
+    el.innerHTML = me.is_admin
+      ? '<div class="empty-state"><strong>Aucun tableau Miro</strong>Configure le lien Miro dans Parametres.</div>'
+      : '<div class="empty-state">Le tableau Miro n\'est pas encore configure.</div>';
+    return;
+  }
+  el.innerHTML = '<div style="height:calc(100vh - 120px);border-radius:14px;overflow:hidden;border:1px solid var(--border)"><iframe src="'+url+'" style="width:100%;height:100%;border:none" allow="fullscreen"></iframe></div>';
+}
+
+// ── STATS MANUELLES ───────────────────────────────────────
+var manualStats = [];
+
+async function loadManualStats() {
+  try {
+    var r = await fetch(API+'/stats/manual',{credentials:'include'});
+    if (!r.ok) return;
+    manualStats = await r.json();
+    if (document.getElementById('viewStats').classList.contains('active')) renderManualStats();
+  } catch(e) {}
+}
+
+function renderManualStats() {
+  var el = document.getElementById('viewStats');
+  var accs = me.social_accounts || [];
+  var html = '';
+
+  if (!accs.length) {
+    el.innerHTML = '<div class="empty-state"><strong>Aucun compte social</strong>Ajoute tes comptes dans Dashboard puis saisis tes stats ici.</div>';
+    return;
+  }
+
+  html += '<div style="font-size:.78rem;color:var(--text2);margin-bottom:16px;background:rgba(139,92,246,0.07);border:1px solid rgba(139,92,246,0.18);border-radius:10px;padding:.8rem 1rem">&#128161; TikTok bloque le scraping automatique depuis les serveurs cloud. Saisis tes stats une fois par semaine pour garder un historique fidele.</div>';
+
+  accs.forEach(function(acc) {
+    var stat = manualStats.find(function(s){ return s.platform===acc.platform && s.handle===acc.handle; });
+    var latest = stat ? stat.latest : null;
+    var history = stat ? stat.history : [];
+    var isYt = acc.platform === 'youtube';
+    var barBase = isYt ? 'rgba(255,0,0,' : 'rgba(139,92,246,';
+
+    html += '<div class="acc-section" style="margin-bottom:12px">';
+    html += '<div class="acc-section-title">'+acc.platform.toUpperCase()+' — '+acc.handle+'</div>';
+
+    // Current stats input
+    html += '<div class="acc-grid" style="margin-bottom:12px">';
+    html += '<div class="acc-field"><label>Followers</label><input type="number" id="stat_'+acc.platform+'_followers" value="'+(latest?latest.followers:'')+'" placeholder="ex: 10000"/></div>';
+    html += '<div class="acc-field"><label>Likes total</label><input type="number" id="stat_'+acc.platform+'_likes" value="'+(latest?latest.likes:'')+'" placeholder="ex: 50000"/></div>';
+    html += '<div class="acc-field"><label>Vues total</label><input type="number" id="stat_'+acc.platform+'_views" value="'+(latest?latest.views:'')+'" placeholder="ex: 100000"/></div>';
+    html += '<div class="acc-field"><label>Videos</label><input type="number" id="stat_'+acc.platform+'_videos" value="'+(latest?latest.videos:'')+'" placeholder="ex: 42"/></div>';
+    html += '</div>';
+    html += '<button class="btn-primary btn-sm" data-platform="'+acc.platform+'" data-handle="'+acc.handle+'" onclick="submitStats(this)">Enregistrer</button>';
+
+    // Chart if history
+    if (history.length > 1) {
+      var maxF = Math.max.apply(null, history.map(function(h){return h.followers;})) || 1;
+      var minF = Math.min.apply(null, history.map(function(h){return h.followers;}));
+      html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border2)">';
+      html += '<div class="chart-lbl">Evolution followers ('+history.length+' entrees)</div>';
+      html += '<div class="chart-wrap">';
+      history.slice().reverse().forEach(function(h,i){
+        var range=maxF-minF||1,pct=Math.max(8,Math.round(((h.followers-minF)/range)*100)),alpha=0.15+(i/history.length)*0.85;
+        html += '<div class="cbar" style="height:'+pct+'%;background:'+barBase+alpha+')" title="'+h.submitted_at+': '+h.followers+'"></div>';
+      });
+      html += '</div></div>';
+    }
+
+    html += '</div>';
+  });
+
+  el.innerHTML = html;
+}
+
+async function submitStats(btn) {
+  var platform = btn.dataset.platform;
+  var handle = btn.dataset.handle;
+  var payload = {
+    platform: platform,
+    handle: handle,
+    followers: parseInt(document.getElementById('stat_'+platform+'_followers').value) || 0,
+    likes: parseInt(document.getElementById('stat_'+platform+'_likes').value) || 0,
+    views: parseInt(document.getElementById('stat_'+platform+'_views').value) || 0,
+    videos: parseInt(document.getElementById('stat_'+platform+'_videos').value) || 0,
+  };
+  if (payload.followers > 0) {
+    payload.engagement_rate = parseFloat(((payload.likes / Math.max(payload.followers,1)) * 100).toFixed(2));
+  }
+  var r = await fetch(API+'/stats/manual',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  var d = await r.json();
+  if (d.ok) {
+    showToast('Stats enregistrees ✓','success');
+    loadManualStats();
+  } else showToast(d.error||'Erreur','error');
 }
 
 async function init(){

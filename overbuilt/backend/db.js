@@ -161,6 +161,40 @@ db.exec(`
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS manual_stats (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    handle TEXT NOT NULL,
+    followers INTEGER DEFAULT 0,
+    likes INTEGER DEFAULT 0,
+    views INTEGER DEFAULT 0,
+    videos INTEGER DEFAULT 0,
+    engagement_rate REAL DEFAULT 0,
+    submitted_at TEXT NOT NULL,
+    UNIQUE(user_id, platform, submitted_at)
+  );
+
+  CREATE TABLE IF NOT EXISTS call_settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    day_of_week INTEGER NOT NULL,
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    slot_duration INTEGER DEFAULT 30,
+    active INTEGER DEFAULT 1
+  );
+
+  CREATE TABLE IF NOT EXISTS onboarding_config (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    step_order INTEGER NOT NULL,
+    step_key TEXT NOT NULL,
+    step_title TEXT NOT NULL,
+    step_type TEXT DEFAULT 'choice',
+    options_json TEXT DEFAULT '[]',
+    required INTEGER DEFAULT 1,
+    active INTEGER DEFAULT 1
+  );
 `);
 
 // Migrations — ajout de colonnes manquantes
@@ -183,5 +217,29 @@ const defaults = [
 for (const [key, value] of defaults) {
   try { db.prepare('INSERT OR IGNORE INTO admin_settings (key, value) VALUES (?, ?)').run(key, value); } catch(e) {}
 }
+
+try { db.exec("ALTER TABLE available_slots ADD COLUMN is_recurring INTEGER DEFAULT 0"); } catch(e) {}
+try { db.exec("ALTER TABLE available_slots ADD COLUMN recur_day INTEGER DEFAULT -1"); } catch(e) {}
+
+// Default call settings if empty
+var existingSettings = db.prepare('SELECT COUNT(*) as c FROM call_settings').get();
+if (existingSettings.c === 0) {
+  // Mon-Fri 9h-18h by default
+  for (var day = 1; day <= 5; day++) {
+    db.prepare('INSERT INTO call_settings (day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, ?, ?)').run(day, '09:00', '18:00', 30);
+  }
+}
+
+// Default admin settings
+var settingsDefaults = [
+  ['miro_url', ''],
+  ['platform_name', 'OVERBUILT'],
+  ['welcome_message', 'Bienvenue sur la plateforme'],
+  ['calls_enabled', '1'],
+  ['daily_reminder_enabled', '1'],
+];
+settingsDefaults.forEach(function(s) {
+  try { db.prepare('INSERT OR IGNORE INTO admin_settings (key, value) VALUES (?, ?)').run(s[0], s[1]); } catch(e) {}
+});
 
 module.exports = db;

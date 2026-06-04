@@ -656,6 +656,133 @@ app.patch('/account', requireAuth, (req, res) => {
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
+
+// ── SETTINGS ─────────────────────────────────────────────
+app.get('/admin/settings', requireAdmin, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM admin_settings').all();
+    const settings = {};
+    rows.forEach(r => settings[r.key] = r.value);
+    res.json(settings);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/admin/settings', requireAdmin, (req, res) => {
+  try {
+    const allowed = ['miro_url','platform_name','welcome_message','calls_enabled','daily_reminder_enabled'];
+    Object.keys(req.body).forEach(key => {
+      if (allowed.includes(key)) {
+        db.prepare('INSERT INTO admin_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value').run(key, req.body[key]);
+      }
+    });
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+// Public settings (for members)
+app.get('/settings/public', requireAuth, (req, res) => {
+  try {
+    const keys = ['miro_url','platform_name','welcome_message'];
+    const settings = {};
+    keys.forEach(k => {
+      const row = db.prepare('SELECT value FROM admin_settings WHERE key = ?').get(k);
+      settings[k] = row ? row.value : '';
+    });
+    res.json(settings);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+// ── STATS MANUELLES ───────────────────────────────────────
+app.post('/stats/manual', requireAuth, (req, res) => {
+  try {
+    const { platform, handle, followers, likes, views, videos, engagement_rate } = req.body;
+    if (!platform || !handle) return res.status(400).json({ error: 'Requis' });
+    const today = new Date().toISOString().split('T')[0];
+    db.prepare('INSERT INTO manual_stats (user_id, platform, handle, followers, likes, views, videos, engagement_rate, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(user_id, platform, submitted_at) DO UPDATE SET followers=excluded.followers, likes=excluded.likes, views=excluded.views, videos=excluded.videos, engagement_rate=excluded.engagement_rate').run(req.session.user.discord_id, platform, handle, followers||0, likes||0, views||0, videos||0, engagement_rate||0, today);
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/stats/manual', requireAuth, (req, res) => {
+  try {
+    const accounts = db.prepare('SELECT DISTINCT platform, handle FROM manual_stats WHERE user_id = ?').all(req.session.user.discord_id);
+    const result = accounts.map(acc => {
+      const history = db.prepare('SELECT * FROM manual_stats WHERE user_id = ? AND platform = ? AND handle = ? ORDER BY submitted_at DESC LIMIT 7').all(req.session.user.discord_id, acc.platform, acc.handle);
+      return { platform: acc.platform, handle: acc.handle, latest: history[0] || null, history };
+    });
+    res.json(result);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/admin/stats/all', requireAdmin, (req, res) => {
+  try {
+    const members = db.prepare('SELECT * FROM users WHERE role = ?').all('member');
+    const today = new Date().toISOString().split('T')[0];
+    const result = members.map(u => {
+      const stats = db.prepare('SELECT * FROM manual_stats WHERE user_id = ? AND submitted_at = ?').all(u.discord_id, today);
+      const allTime = db.prepare('SELECT platform, handle, MAX(followers) as max_followers FROM manual_stats WHERE user_id = ? GROUP BY platform, handle').all(u.discord_id);
+      return { discord_id: u.discord_id, discord_username: u.discord_username, today_stats: stats, all_time: allTime };
+    });
+    res.json(result);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+// ── CALL SETTINGS ─────────────────────────────────────────
+app.get('/admin/call-settings', requireAdmin, (req, res) => {
+  try {
+    res.json(db.prepare('SELECT * FROM call_settings ORDER BY day_of_week').all());
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/admin/call-settings', requireAdmin, (req, res) => {
+  try {
+    const { day_of_week, start_time, end_time, slot_duration, active } = req.body;
+    db.prepare('INSERT INTO call_settings (day_of_week, start_time, end_time, slot_duration, active) VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING').run(day_of_week, start_time, end_time, slot_duration||30, active!==false?1:0);
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.patch('/admin/call-settings/:id', requireAdmin, (req, res) => {
+  try {
+    const { start_time, end_time, slot_duration, active } = req.body;
+    if (start_time !== undefined) db.prepare('UPDATE call_settings SET start_time=? WHERE id=?').run(start_time, req.params.id);
+    if (end_time !== undefined) db.prepare('UPDATE call_settings SET end_time=? WHERE id=?').run(end_time, req.params.id);
+    if (slot_duration !== undefined) db.prepare('UPDATE call_settings SET slot_duration=? WHERE id=?').run(slot_duration, req.params.id);
+    if (active !== undefined) db.prepare('UPDATE call_settings SET active=? WHERE id=?').run(active?1:0, req.params.id);
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+// Auto-generate slots for next 7 days based on call settings
+app.post('/admin/slots/generate', requireAdmin, (req, res) => {
+  try {
+    const settings = db.prepare('SELECT * FROM call_settings WHERE active=1').all();
+    let generated = 0;
+    for (let i = 0; i <= 6; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      const dayOfWeek = d.getDay();
+      const dateStr = d.toISOString().split('T')[0];
+      const daySetting = settings.find(s => s.day_of_week === dayOfWeek);
+      if (!daySetting) continue;
+      const [sh, sm] = daySetting.start_time.split(':').map(Number);
+      const [eh, em] = daySetting.end_time.split(':').map(Number);
+      let cur = sh * 60 + sm;
+      const end = eh * 60 + em;
+      while (cur + daySetting.slot_duration <= end) {
+        const h = String(Math.floor(cur/60)).padStart(2,'0');
+        const m = String(cur%60).padStart(2,'0');
+        try {
+          db.prepare('INSERT OR IGNORE INTO available_slots (date, time, duration) VALUES (?, ?, ?)').run(dateStr, h+':'+m, daySetting.slot_duration);
+          generated++;
+        } catch(e) {}
+        cur += daySetting.slot_duration;
+      }
+    }
+    res.json({ ok: true, generated });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 
 
