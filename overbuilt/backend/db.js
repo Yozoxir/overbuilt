@@ -145,6 +145,21 @@ db.exec(`
     channel_id TEXT NOT NULL
   );
 
+  CREATE TABLE IF NOT EXISTS module_images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    module_id INTEGER NOT NULL,
+    filename TEXT NOT NULL,
+    data BLOB NOT NULL,
+    mime_type TEXT DEFAULT 'image/jpeg',
+    created_at INTEGER DEFAULT (unixepoch())
+  );
+
+  CREATE TABLE IF NOT EXISTS dashboard_layout (
+    user_id TEXT PRIMARY KEY,
+    layout TEXT NOT NULL DEFAULT '[]',
+    updated_at INTEGER DEFAULT (unixepoch())
+  );
+
   CREATE TABLE IF NOT EXISTS admin_settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL

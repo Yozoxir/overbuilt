@@ -1,4 +1,6 @@
 require('dotenv').config();
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
@@ -594,6 +596,83 @@ app.get('/settings', (req, res) => {
     const settings = {};
     rows.forEach(r => { try { settings[r.key] = JSON.parse(r.value); } catch(e) { settings[r.key] = r.value; } });
     res.json(settings);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+
+// ── IMAGE UPLOAD MODULES ──────────────────────────────────
+app.post('/admin/formations/modules/:id/image', requireAdmin, upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'Aucun fichier' });
+    db.prepare('DELETE FROM module_images WHERE module_id = ?').run(req.params.id);
+    db.prepare('INSERT INTO module_images (module_id, filename, data, mime_type) VALUES (?, ?, ?, ?)').run(req.params.id, req.file.originalname, req.file.buffer, req.file.mimetype);
+    res.json({ ok: true, url: '/api/module-image/' + req.params.id });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/api/module-image/:id', (req, res) => {
+  try {
+    const img = db.prepare('SELECT * FROM module_images WHERE module_id = ?').get(req.params.id);
+    if (!img) return res.status(404).send('Not found');
+    res.setHeader('Content-Type', img.mime_type);
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.send(img.data);
+  } catch(err) { res.status(500).send('Error'); }
+});
+
+// ── DASHBOARD LAYOUT ──────────────────────────────────────
+app.get('/layout', requireAuth, (req, res) => {
+  try {
+    const row = db.prepare('SELECT layout FROM dashboard_layout WHERE user_id = ?').get(req.session.user.discord_id);
+    res.json({ layout: row ? JSON.parse(row.layout) : null });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/layout', requireAuth, (req, res) => {
+  try {
+    const { layout } = req.body;
+    db.prepare('INSERT INTO dashboard_layout (user_id, layout) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET layout=excluded.layout, updated_at=unixepoch()').run(req.session.user.discord_id, JSON.stringify(layout));
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+// ── COMPTE MEMBRE (éditer onboarding) ────────────────────
+app.get('/account', requireAuth, (req, res) => {
+  try {
+    const ob = db.prepare('SELECT * FROM onboarding WHERE discord_id = ?').get(req.session.user.discord_id);
+    res.json(ob || null);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.patch('/account', requireAuth, (req, res) => {
+  try {
+    const fields = ['prenom','nom','phone','email','objectif','experience','disponibilite','niche','tiktok_handle','instagram_handle','youtube_handle','motivation'];
+    const updates = [];
+    const values = [];
+    fields.forEach(f => {
+      if (req.body[f] !== undefined) {
+        updates.push(f + ' = ?');
+        values.push(req.body[f]);
+      }
+    });
+    if (!updates.length) return res.json({ ok: true });
+    values.push(req.session.user.discord_id);
+    db.prepare('UPDATE onboarding SET ' + updates.join(', ') + ' WHERE discord_id = ?').run(...values);
+
+    // Sync social accounts
+    const handles = [
+      { platform: 'tiktok', handle: req.body.tiktok_handle },
+      { platform: 'instagram', handle: req.body.instagram_handle },
+      { platform: 'youtube', handle: req.body.youtube_handle },
+    ];
+    for (const h of handles) {
+      if (h.handle !== undefined) {
+        if (h.handle && h.handle.trim()) {
+          try { db.prepare('INSERT OR IGNORE INTO social_accounts (user_id, platform, handle) VALUES (?, ?, ?)').run(req.session.user.discord_id, h.platform, h.handle.trim()); } catch(e) {}
+        }
+      }
+    }
+    res.json({ ok: true });
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 

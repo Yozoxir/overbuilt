@@ -352,6 +352,43 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
 .view-sub{font-size:.63rem;color:var(--text3);margin-top:2px}
 
 @media(max-width:900px){.social-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.today-grid,.slots-grid{grid-template-columns:1fr}.sidebar{width:52px}.sbi-lbl,.sb-logo-name,.sb-uname,.sb-section-lbl,.sb-admin-lbl,.sbi-admin .sbi-lbl{display:none}}
+
+/* DRAG & DROP DASHBOARD */
+.dash-widget{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative;transition:all .15s}
+.dash-widget.dragging{opacity:.4;transform:scale(.98)}
+.dash-widget.drag-over{border-color:rgba(139,92,246,0.5);background:rgba(139,92,246,0.05)}
+.widget-drag-handle{position:absolute;top:10px;right:10px;cursor:grab;color:var(--text3);opacity:0;transition:opacity .15s;display:flex;gap:2px;flex-direction:column}
+.widget-drag-handle span{width:14px;height:1.5px;background:currentColor;border-radius:1px;display:block}
+.dash-widget:hover .widget-drag-handle{opacity:1}
+.widget-drag-handle:active{cursor:grabbing}
+.widget-toggle{position:absolute;top:10px;right:30px;cursor:pointer;color:var(--text3);opacity:0;transition:opacity .15s;font-size:.75rem;background:none;border:none;font-family:var(--font)}
+.dash-widget:hover .widget-toggle{opacity:1}
+.dash-widget.hidden-widget .widget-body{display:none}
+.dash-widget.hidden-widget{opacity:.5;border-style:dashed}
+.widget-hidden-label{text-align:center;padding:.5rem;font-size:.7rem;color:var(--text3);font-style:italic}
+.drag-grid{display:flex;flex-direction:column;gap:10px}
+.drag-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ACCOUNT */
+.account-section{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px}
+.account-section-title{font-size:.72rem;font-weight:700;color:var(--accent-light);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.account-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.account-field{display:flex;flex-direction:column;gap:.3rem}
+.account-field label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-weight:600}
+.account-field input,.account-field textarea,.account-field select{background:rgba(0,0,0,0.2);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;font-family:var(--font);font-size:.84rem;outline:none;border-radius:9px;transition:border-color .15s;width:100%}
+.account-field input:focus,.account-field textarea:focus{border-color:rgba(139,92,246,0.4)}
+.account-field input::placeholder{color:var(--text3)}
+.account-field textarea{min-height:80px;resize:vertical;line-height:1.5}
+.account-field.full{grid-column:1/-1}
+
+/* IMAGE UPLOAD */
+.img-upload-zone{border:2px dashed rgba(139,92,246,0.25);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .15s;position:relative}
+.img-upload-zone:hover{border-color:rgba(139,92,246,0.5);background:rgba(139,92,246,0.04)}
+.img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-zone .upload-icon{font-size:1.5rem;margin-bottom:.4rem}
+.img-upload-zone .upload-text{font-size:.78rem;color:var(--text3)}
+.img-upload-zone .upload-hint{font-size:.65rem;color:var(--text3);margin-top:.2rem;opacity:.6}
+.img-preview{width:100%;max-height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:none;margin-top:.5rem}
 </style>
 </head>
 <body>
@@ -485,6 +522,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
         <div class="sbi-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
         <span class="sbi-lbl">Calls</span>
       </div>
+      <div class="sbi" data-view="Compte" onclick="navTo('Compte',this)">
+        <div class="sbi-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        <span class="sbi-lbl">Mon compte</span>
+      </div>
       <div class="sbi" data-view="Formation" onclick="navTo('Formation',this)">
         <div class="sbi-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
         <span class="sbi-lbl">Formation</span>
@@ -545,6 +586,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
       <div class="view" id="viewDaily"></div>
       <!-- CALLS -->
       <div class="view" id="viewCalls"></div>
+      <!-- COMPTE -->
+      <div class="view" id="viewCompte"></div>
       <!-- FORMATION -->
       <div class="view" id="viewFormation"></div>
       <!-- ADMIN -->
@@ -639,7 +682,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font)}
 
 <script>
 var API='',me=null,formations=[],slotsData=[],currentChapterId=null,currentChapterDone=false,noteTargetId=null,msgTargetId=null,obAnswers={},adminData=[];
-var VIEWS={Dashboard:{title:'DASHBOARD',sub:''},Daily:{title:"AUJOURD'HUI",sub:''},Calls:{title:'CALLS',sub:'Réserver un 1:1'},Formation:{title:'FORMATION',sub:''},Admin:{title:'MEMBRES',sub:''},AdminCalls:{title:'AGENDA',sub:'Gérer les créneaux'},AdminContent:{title:'CONTENU',sub:'Théorie + action du jour'},TimeBlocks:{title:'TIME BLOCKS',sub:'Bilans 30 min'},Onboardings:{title:'ONBOARDINGS',sub:''}};
+var VIEWS={Dashboard:{title:'DASHBOARD',sub:''},Compte:{title:'MON COMPTE',sub:'Modifier tes informations'},Daily:{title:"AUJOURD'HUI",sub:''},Calls:{title:'CALLS',sub:'Réserver un 1:1'},Formation:{title:'FORMATION',sub:''},Admin:{title:'MEMBRES',sub:''},AdminCalls:{title:'AGENDA',sub:'Gérer les créneaux'},AdminContent:{title:'CONTENU',sub:'Théorie + action du jour'},TimeBlocks:{title:'TIME BLOCKS',sub:'Bilans 30 min'},Onboardings:{title:'ONBOARDINGS',sub:''}};
 
 async function init(){
   var p=new URLSearchParams(window.location.search);
@@ -663,7 +706,8 @@ function showApp(){
     loadAdmin();loadAdminCalls();loadAdminContent();loadOnboardings();loadTimeBlocks();
     setInterval(loadAdmin,60000);setInterval(loadTimeBlocks,30000);
   }
-  renderDashboard();loadFormations();loadDaily();loadSlots();loadMyCalls();
+  loadLayout().then(function(){ renderDashboard(); });
+  loadFormations();loadDaily();loadSlots();loadMyCalls();loadAccount();
 }
 
 function navTo(name,el){
@@ -672,6 +716,7 @@ function navTo(name,el){
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
   var view=document.getElementById('view'+name);
   if(view)view.classList.add('active');
+  if(name==='Compte')loadAccount();
   var meta=VIEWS[name]||{title:name,sub:''};
   document.getElementById('mhTitle').textContent=meta.title;
   document.getElementById('mhSub').textContent=meta.sub||(function(){var ob=me&&me.onboarding;var today=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});return(ob?'Bonjour '+ob.prenom+' — ':'')+today.charAt(0).toUpperCase()+today.slice(1);})();
@@ -710,7 +755,8 @@ async function submitOnboarding(){
 
 // ── DASHBOARD ──────────────────────────────────────────────
 function fmtN(n){if(!n)return '0';n=parseInt(n);if(n>=1000000)return (n/1000000).toFixed(1).replace('.0','')+'M';if(n>=1000)return (n/1000).toFixed(1).replace('.0','')+'k';return n.toString();}
-function renderDashboard(){
+function renderDashboard(){ renderDashboardLayout(); }
+function renderDashboardOLD(){
   var el=document.getElementById('viewDashboard'),accs=me.social_accounts||[];
   if(!accs.length){el.innerHTML='<div class="empty-state">Aucun compte social — ajoute-les ci-dessous pour suivre ta progression.</div>'+buildAddAccountForm();return;}
   var tf=accs.reduce(function(s,a){return s+(a.latest?a.latest.followers:0);},0);
@@ -885,7 +931,8 @@ function renderFormations(){
     var pc=mod.progress_pct,pcc=pc===100?'var(--accent-light)':pc>0?'#fbbf24':'var(--text3)';
     var tm=mod.chapters.reduce(function(s,c){return s+(c.duration_minutes||0);},0);
     html+='<div class="mod-card"><div class="mod-head">';
-    if(mod.cover_url)html+='<img src="'+mod.cover_url+'" class="mod-cover" onerror="this.style.display=\'none\'"/>';
+    var imgUrl=mod.cover_url||'/api/module-image/'+mod.id;
+    if(me&&me.is_admin){html+=buildModuleImageUpload(mod.id,mod.cover_url);} else if(mod.cover_url)html+='<img src="'+mod.cover_url+'" class="mod-cover" onerror="this.style.display=\'none\'"/>';
     html+='<div style="flex:1"><div class="mod-title">'+mod.title+'</div>'+(mod.description?'<div class="mod-meta">'+mod.description+'</div>':'')+'<div class="mod-meta">'+mod.total_chapters+' chapitre'+(mod.total_chapters>1?'s':'')+(tm>0?' · '+durStr(tm):'')+'</div></div>';
     html+='<div style="text-align:right;flex-shrink:0"><div class="mod-pct" style="color:'+pcc+'">'+pc+'%</div><div class="mod-pct-lbl">'+mod.completed_chapters+'/'+mod.total_chapters+'</div><div class="mod-prog-track"><div class="mod-prog-fill" style="width:'+pc+'%;background:'+pcc+'"></div></div></div>';
     if(me&&me.is_admin){html+='<div style="display:flex;gap:4px;flex-shrink:0"><button class="act-btn" data-mod-id="'+mod.id+'" data-mod-title="'+mod.title.replace(/"/g,'&quot;')+'" data-mod-desc="'+(mod.description||'').replace(/"/g,'&quot;')+'" data-mod-cover="'+(mod.cover_url||'')+'" onclick="editModBtn(this)">&#9999;</button><button class="act-btn" data-mod-id="'+mod.id+'" onclick="addChBtn(this)">+Ch</button><button class="act-btn danger" data-mod-id="'+mod.id+'" onclick="delModBtn(this)">&#128465;</button></div>';}
