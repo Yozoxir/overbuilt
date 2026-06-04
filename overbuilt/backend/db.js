@@ -144,13 +144,12 @@ db.exec(`
     discord_id TEXT PRIMARY KEY,
     channel_id TEXT NOT NULL
   );
-`);
-
 
   CREATE TABLE IF NOT EXISTS admin_settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
   );
+`);
 
 // Migrations — ajout de colonnes manquantes
 try { db.exec('ALTER TABLE calls ADD COLUMN status TEXT DEFAULT \'pending\''); } catch(e) {}
